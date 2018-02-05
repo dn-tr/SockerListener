@@ -95,7 +95,7 @@ namespace SocketListener
 
             if (bytesRead > 0)
             {
-                clientData.StrData += Encoding.ASCII.GetString(clientData.Buffer, 0, bytesRead);
+                clientData.StrData += Encoding.UTF8.GetString(clientData.Buffer, 0, bytesRead).Replace("\r\n", "\n");
 
                 if (clientData.StrData.IndexOf("\n") > -1)
                 {
@@ -108,7 +108,7 @@ namespace SocketListener
                     if (int.TryParse(strData, out intData))
                     {
                         clientData.AddIntData(intData);
-                        Send(clientData, $"\r\nSUM: {clientData.IntData}\r\n");
+                        Send(clientData, $"SUM: {clientData.IntData}\r\n");
                     }
                     else
                     {
@@ -150,7 +150,7 @@ namespace SocketListener
         private static void Send(ClientData clientData, string data)
         {
             Socket handler = clientData.Socket;
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            byte[] byteData = Encoding.UTF8.GetBytes(data);
 
             // Begin sending the data to the remote device.  
             handler.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), clientData);
